@@ -20,7 +20,10 @@ group :development do
 end
 
 group :test do
+  gem 'faker'
   gem 'rspec-rails'
+  gem 'shoulda-matchers'
+  gem 'factory_girl_rails'
   gem 'simplecov', require: false
 end
 
