@@ -12,8 +12,7 @@ class ImagesController < ApplicationController
   end
 
   def update
-    person = @image.person || Person.new
-    person.name = params[:name]
+    person = Person.find_or_create_by(name: params[:name])
     @image.update(person: person)
     render json: { success: 'true' }
   end
