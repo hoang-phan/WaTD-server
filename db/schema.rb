@@ -11,10 +11,20 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20160109042023) do
+ActiveRecord::Schema.define(version: 20160109085649) do
 
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
+
+  create_table "devices", force: :cascade do |t|
+    t.string   "device_id"
+    t.string   "reg_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  add_index "devices", ["device_id"], name: "index_devices_on_device_id", using: :btree
+  add_index "devices", ["reg_id"], name: "index_devices_on_reg_id", using: :btree
 
   create_table "images", force: :cascade do |t|
     t.binary   "data"

@@ -36,4 +36,49 @@ describe Recognizer do
       end
     end
   end
+
+  describe '#send_push_message' do
+    let!(:device) { create(:device) }
+    let(:distance) { 5 }
+
+    after do
+      subject.send(:send_push_message, id, distance)
+    end
+
+    context 'id is not 0' do
+      let!(:image) { create(:image, person: person) }
+      let!(:person) { create(:person) }
+      let(:id) { image.id }
+      
+      it 'sends name to devices' do
+        expect($gcm).to receive(:send).with(
+          [device.reg_id],
+          {
+            data: {
+              name: person.name,
+              distance: distance
+            },
+            collapse_key: 'Recognizer'
+          }
+        )
+      end
+    end
+
+    context 'id is 0' do
+      let(:id) { 0 }
+
+      it 'sends Unrecognized person to devices' do
+        expect($gcm).to receive(:send).with(
+          [device.reg_id],
+          {
+            data: {
+              name: 'Unrecognized person',
+              distance: distance
+            },
+            collapse_key: 'Recognizer'
+          }
+        )
+      end
+    end
+  end
 end
