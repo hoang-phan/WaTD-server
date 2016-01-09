@@ -1,7 +1,19 @@
 class ImagesController < ApplicationController
+  before_action :set_image, only: [:show, :update]
+
   def create
     image = Image.create(image_params)
     Recognizer.perform_async(image.id)
+    render json: { success: 'true' }
+  end
+
+  def show
+    send_data @image.data, type: 'image/jpg', disposition: 'inline'
+  end
+
+  def update
+    person = Person.find_or_create_by(name: params[:name])
+    @image.update(person: person)
     render json: { success: 'true' }
   end
 
@@ -9,5 +21,9 @@ class ImagesController < ApplicationController
 
   def image_params
     params.require(:image).permit(:data)
+  end
+
+  def set_image
+    @image = Image.find(params[:id])
   end
 end

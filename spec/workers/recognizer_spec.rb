@@ -10,7 +10,7 @@ describe Recognizer do
 
     context 'has no previous classified images' do
       it 'returns id 0 and confidence 0' do
-        expect(subject).to receive(:send_push_message).with(0, 0)
+        expect(subject).to receive(:send_push_message).with(test_image.id, 0, 0)
       end
     end
 
@@ -32,7 +32,7 @@ describe Recognizer do
       end
 
       it 'returns correct id' do
-        expect(subject).to receive(:send_push_message).with(sample_image_1.id, anything)
+        expect(subject).to receive(:send_push_message).with(test_image.id, sample_image_1.id, anything)
       end
     end
   end
@@ -40,9 +40,10 @@ describe Recognizer do
   describe '#send_push_message' do
     let!(:device) { create(:device) }
     let(:distance) { 5 }
+    let(:image_id) { 3 }
 
     after do
-      subject.send(:send_push_message, id, distance)
+      subject.send(:send_push_message, image_id, id, distance)
     end
 
     context 'id is not 0' do
@@ -55,6 +56,7 @@ describe Recognizer do
           [device.reg_id],
           {
             data: {
+              id: image_id,
               name: person.name,
               distance: distance
             },
@@ -72,6 +74,7 @@ describe Recognizer do
           [device.reg_id],
           {
             data: {
+              id: image_id,
               name: 'Unrecognized person',
               distance: distance
             },

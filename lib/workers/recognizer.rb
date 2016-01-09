@@ -6,30 +6,30 @@ class Recognizer
 
   def perform(image_id)
     if test_image = Image.find_by_id(image_id)
-      recognize(build_samples, test_image.data)
+      recognize(image_id, build_samples, test_image.data)
     end
   end
 
   private
 
-  def recognize(samples, data)
+  def recognize(image_id, samples, data)
     id, distance = 0, 0
     if samples[0].present?
       recognizer = LBPH.new
       recognizer.train(*samples)
       id, distance = recognizer.predict(CvMat.decode_image(data, CV_LOAD_IMAGE_GRAYSCALE))
     end
-    send_push_message(id, distance)
+    send_push_message(image_id, id, distance)
   end
 
-  def send_push_message(id, distance)
+  def send_push_message(image_id, id, distance)
     name = 'Unrecognized person'
     if id != 0
       name = Image.find_by_id(id).try(:person).try(:name)
     end
     
     if (reg_ids = Device.pluck(:reg_id)).present?
-      $gcm.send(Device.pluck(:reg_id), { data: { name: name, distance: distance }, collapse_key: 'Recognizer' } )
+      $gcm.send(Device.pluck(:reg_id), { data: { id: image_id, name: name, distance: distance }, collapse_key: 'Recognizer' } )
     end
   end
 
