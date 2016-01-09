@@ -14,6 +14,7 @@ describe ImagesController, type: :controller do
     let(:image) { Image.last }
 
     it 'creates new images' do
+      expect(Recognizer).to receive(:perform_async).with(anything)
       expect {
         post :create, params
       }.to change(Image, :count).by 1
