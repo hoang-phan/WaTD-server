@@ -13,7 +13,7 @@ describe ImagesController, type: :controller do
     let(:data) { Faker::Lorem.word }
     let(:image) { Image.last }
 
-    it 'creates new images' do
+    it 'creates new image' do
       expect(Recognizer).to receive(:perform_async).with(anything)
       expect {
         post :create, params

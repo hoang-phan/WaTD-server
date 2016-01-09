@@ -23,7 +23,14 @@ class Recognizer
   end
 
   def send_push_message(id, distance)
-
+    name = 'Unrecognized person'
+    if id != 0
+      name = Image.find_by_id(id).try(:person).try(:name)
+    end
+    
+    if (reg_ids = Device.pluck(:reg_id)).present?
+      $gcm.send(Device.pluck(:reg_id), { data: { name: name, distance: distance }, collapse_key: 'Recognizer' } )
+    end
   end
 
   def build_samples
